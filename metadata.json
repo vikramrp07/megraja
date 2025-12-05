@@ -1,0 +1,5 @@
+{
+  "name": "Megraja Finance",
+  "description": "A comprehensive personal finance tracker with income/expense logging, interactive visualizations, and AI-powered financial advice powered by Gemini.",
+  "requestFramePermissions": []
+}
