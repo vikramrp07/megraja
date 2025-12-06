@@ -6,6 +6,7 @@ import Charts from './components/Charts';
 import TransactionList from './components/TransactionList';
 import Advisor from './components/Advisor';
 import CategoryManager from './components/CategoryManager';
+import DataExport from './components/DataExport';
 import { Transaction, DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } from './types';
 
 function App() {
@@ -209,7 +210,8 @@ function App() {
           )}
 
           {activeTab === 'settings' && (
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto space-y-6">
+              <DataExport transactions={transactions} />
               <CategoryManager 
                 incomeCategories={incomeCategories}
                 expenseCategories={expenseCategories}

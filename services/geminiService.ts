@@ -2,9 +2,9 @@ import { Transaction, FinancialAdvice } from "../types";
 
 export const getFinancialAdvice = async (transactions: Transaction[]): Promise<FinancialAdvice> => {
   try {
-    // We now send the transactions to our own Node.js backend
-    // This keeps the API key secure on the server side
-    const response = await fetch('/api/analyze', {
+    // Call the Netlify Function
+    // Netlify Functions are served at /.netlify/functions/<function_name>
+    const response = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
