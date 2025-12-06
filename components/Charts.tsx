@@ -18,7 +18,7 @@ const Charts: React.FC<ChartsProps> = ({ transactions }) => {
   }, {} as Record<string, number>);
 
   const pieData = Object.entries(expensesByCategory)
-    .map(([name, value]) => ({ name, value }))
+    .map(([name, value]) => ({ name, value: Number(value) }))
     .sort((a, b) => b.value - a.value);
 
   // Aggregate by type (Income vs Expense)
