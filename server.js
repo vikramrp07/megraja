@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import compression from 'compression';
 import { GoogleGenAI, Type } from "@google/genai";
 
 dotenv.config();
@@ -13,12 +14,17 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Enable Gzip compression for faster loading on shared hosting
+app.use(compression());
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the React build directory
-app.use(express.static(path.join(__dirname, 'dist')));
+// --- Health Check for Hosting Providers ---
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
 
 // --- API Routes ---
 
@@ -26,7 +32,8 @@ app.post('/api/analyze', async (req, res) => {
   try {
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: "Server configuration error: API Key missing" });
+      console.error("API_KEY is missing in environment variables");
+      return res.status(500).json({ error: "Server configuration error" });
     }
 
     const { transactions } = req.body;
@@ -35,7 +42,6 @@ app.post('/api/analyze', async (req, res) => {
       return res.status(400).json({ error: "Invalid input: transactions array required" });
     }
 
-    // --- Logic moved from frontend to backend for security ---
     const totalIncome = transactions
       .filter(t => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0);
@@ -97,11 +103,19 @@ app.post('/api/analyze', async (req, res) => {
   }
 });
 
+// --- Static Files ---
+// Serve static files from the React build directory with cache headers
+const distPath = path.join(__dirname, 'dist');
+app.use(express.static(distPath, {
+  maxAge: '1y', // Cache static assets for 1 year
+  etag: false
+}));
+
 // --- Catch-all Route ---
 // For any request that doesn't match an API route or static file,
 // send back index.html so React Router handles the page.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
 app.listen(PORT, () => {
