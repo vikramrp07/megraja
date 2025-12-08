@@ -2,9 +2,8 @@ import { Transaction, FinancialAdvice } from "../types";
 
 export const getFinancialAdvice = async (transactions: Transaction[]): Promise<FinancialAdvice> => {
   try {
-    // Call the Netlify Function
-    // Netlify Functions are served at /.netlify/functions/<function_name>
-    const response = await fetch('/.netlify/functions/analyze', {
+    // Call the Vercel Serverless Function
+    const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
